@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            font-size: 22px;
+            background-color: #d3d3d3;
+        }
+
+        h1 {
+            margin-top: 0px;
+            font-size: 40px;
+            color: #000000;
+            background-color: #d3d3d3;
+            padding: 0px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            width: 240px;
+            height: 100vh;
+        }
+
+        nav button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: white;
+            background-color: #555;
+            border: none;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background-color: #333;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        form {
+            text-align: left;
+            margin-top: 10px;
+            padding: 0 0px;
+        }
+		
+		.form-group input[type="file"] {
+            width: auto;
+            max-width: 100%;
+            overflow: visible;
+            text-overflow: clip;
+            white-space: normal;
+        }
+		
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 20px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group .inline-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group select, .form-group input {
+            font-size: 20px;
+            padding: 8px;
+            margin-right: 10px;
+            width: 150px;
+        }
+
+        button {
+            width: 200px;
+            height: 80px;
+            font-size: 22px;
+            background-color: #808080;
+            color: white;
+            border: none;
+            transition: background-color 0.3s;
+            margin-left: 0;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        #fileNames {
+            font-size: 18px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .condition-box, .file-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .delete-condition, .delete-file {
+            margin-left: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #888;
+        }
+
+        .delete-condition:hover, .delete-file:hover {
+            color: #ff0000;
+        }
+
+        #selectedConditions, #selectedPastConditions, .selected-files {
+            margin-top: 10px;
+        }
+		.form-group input[type="file"] {
+            width: auto;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .custom-file-input {
+            color: transparent;
+            width: 100%;
+        }
+
+        .custom-file-input::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+
+        .custom-file-input::before {
+            content: '選擇檔案';
+            color: black;
+            display: inline-block;
+            background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+            border: 1px solid #999;
+            border-radius: 3px;
+            padding: 20px 20px;
+            outline: none;
+            white-space: nowrap;
+            -webkit-user-select: none;
+            cursor: pointer;
+            text-shadow: 1px 1px #fff;
+            font-weight: 700;
+            font-size: 15pt;
+        }
+
+        .custom-file-input:hover::before {
+            border-color: black;
+        }
+
+        .custom-file-input:active::before {
+            background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+        }
+    </style>
+
+    <script src="./patient.js"></script>
+    <script src="./observation.js"></script>
+    <script src="./download.js"></script>
+	<script src="./config.js"></script>
+    <title>檢測數據</title>
+</head>
+<body>
+    
+    <nav>
+        <button onclick="window.location.href = 'showPatientInfo.html'">病患資料建檔</button>
+        <button onclick="window.location.href = 'diagnosis_info.html'">上傳病歷檔案</button>
+        <button onclick="window.location.href = 'showDownload.html'">下載病歷報告</button>
+        <!--<button onclick="window.location.href = 'medicine.html'">藥物相關注意事項警示</button>-->
+        <button onclick="window.location.href = 'MedicineRecommandation.html'">藥物推薦</button>
+	<!--<button onclick="window.location.href = 'Nutritional management.html'">營養管理</button>-->
+        <button onclick="window.location.href = 'showAllPatients.html'">查看病患資料</button>
+    </nav>
+
+    <main id="content">
+        <!-- 內容將根據點擊的按鈕而變化 -->
+        <h1>檢測數據</h1>
+    </main>
+
+    <script>
+        let selectedConditions = new Set();
+        let selectedPastConditions = new Set();
+        let selectedFiles = new Set();
+        let selectedPictureFiles = new Set();
+
+        function showDiagnosisInfo() {
+            document.getElementById("content").innerHTML = `
+                <h1 style="text-align: center; margin-bottom: 0.1em;">
+  			電子病歷資訊網站
+		</h1>
+		<h2 style="text-align: center; margin-top: 0.1em;">
+  			(資料來源: 衛福部健保雲端資料 醫院自有病歷資料 個人攜帶的病歷資料)
+		</h2>
+                <h2>上傳病歷檔案</h2>
+                <p id="errorOutput" style="color: red;"></p>
+                <form action="#" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="userID">身分證字號</label>
+                        <input type="text" id="userID">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email(用於上傳結果通知)</label>
+                        <input type="email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="pasthistory">過去病史</label>
+                        <div class="inline-group">
+                            <input list="past_conditions" id="pasthistory" name="pasthistory">
+                            <datalist id="past_conditions">
+                                <option value="糖尿病">
+                                <option value="高血壓">
+                                <option value="高尿酸血症">
+                                <option value="慢性腎臟病">
+                                <option value="代謝性症候群">
+                                <option value="心臟病">
+                                <option value="癌症">
+                                <option value="中風">
+                            </datalist>
+                        </div>
+                        <div id="selectedPastConditions"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="familyhistory">家族病史</label>
+                        <div class="inline-group">
+                            <input list="conditions" id="familyhistory" name="familyhistory">
+                            <datalist id="conditions">
+                                <option value="糖尿病">
+                                <option value="高血壓">
+                                <option value="高尿酸血症">
+                                <option value="慢性腎臟病">
+                                <option value="代謝性症候群">
+                                <option value="心臟病">
+                                <option value="癌症">
+                                <option value="中風">
+                            </datalist>
+                        </div>
+                        <div id="selectedConditions"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="family_history_heart">家族病史：早期心血管病（男<=55. 女<=65歲) </label>
+                        <div class="inline-group">
+                            <select id="family_history_heart">
+			    	<option value="unknown">不清楚</option>
+                                <option value="yes">有</option>
+                                <option value="no">無</option>
+                            </select>
+                            <input type="text" id="family_history_heart_input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="smoking">抽菸史</label>
+                        <input type="text" id="smoking">
+                    </div>
+                    <div class="form-group">
+                        <label for="drinking">喝酒史</label>
+                        <input type="text" id="drinking">
+                    </div>
+					<div class="form-group">
+						<label for="fileInput">選擇檔案：</label>
+						<input type="file" id="fileInput" name="fileInput" accept=".txt, .pdf, .doc, .docx, .csv" multiple onchange="handleFileSelect(event)" class="custom-file-input">
+					</div>
+					<div id="fileList" class="selected-files"></div>
+
+					<div class="form-group">
+						<label for="picturefileInput">選擇壓縮檔(圖片病歷)：</label>
+						<input type="file" id="picturefileInput" name="picturefileInput" accept=".zip" multiple onchange="handlePictureFileSelect(event)" class="custom-file-input">
+					</div>
+                    <div id="pictureFileList" class="selected-files"></div>
+
+                    <br>
+                    <button type="button" onclick="uploadFiles()">上傳</button>
+                    <br>
+                    <div id="loadingSpinner" style="display: none; text-align: center;">
+                        <img src="Loading_icon.gif" alt="Loading..." width="50" height="50">
+                        <p>Loading...</p>
+                    </div>
+                    <div id="responseMessage"></div>
+                </form>`;
+
+            document.getElementById('familyhistory').addEventListener('change', function() {
+                const condition = this.value;
+                if (condition && !selectedConditions.has(condition)) {
+                    selectedConditions.add(condition);
+                    updateSelectedConditions();
+                }
+                this.value = '';
+            });
+
+            document.getElementById('pasthistory').addEventListener('change', function() {
+                const condition = this.value;
+                if (condition && condition !== '自定義' && !selectedPastConditions.has(condition)) {
+                    selectedPastConditions.add(condition);
+                    updateSelectedPastConditions();
+                } else if (condition === '自定義') {
+                    const customInput = document.createElement('input');
+                    customInput.type = 'text';
+                    customInput.placeholder = '請輸入自定義過去病史';
+                    customInput.onchange = function() {
+                        const customCondition = this.value.trim();
+                        if (customCondition && !selectedPastConditions.has(customCondition)) {
+                            selectedPastConditions.add(customCondition);
+                            updateSelectedPastConditions();
+                            this.remove();
+                        }
+                    };
+                    this.parentNode.appendChild(customInput);
+                }
+                this.value = '';
+            });
+        }
+
+        function updateSelectedConditions() {
+            const container = document.getElementById('selectedConditions');
+            container.innerHTML = '';
+            selectedConditions.forEach(condition => {
+                const box = document.createElement('div');
+                box.className = 'condition-box';
+                box.innerHTML = `
+                    ${condition}
+                    <span class="delete-condition" onclick="removeCondition('${condition}')">&times;</span>
+                `;
+                container.appendChild(box);
+            });
+        }
+
+        function updateSelectedPastConditions() {
+            const container = document.getElementById('selectedPastConditions');
+            container.innerHTML = '';
+            selectedPastConditions.forEach(condition => {
+                const box = document.createElement('div');
+                box.className = 'condition-box';
+                box.innerHTML = `
+                    ${condition}
+                    <span class="delete-condition" onclick="removePastCondition('${condition}')">&times;</span>
+                `;
+                container.appendChild(box);
+            });
+        }
+
+        function removeCondition(condition) {
+            selectedConditions.delete(condition);
+            updateSelectedConditions();
+        }
+
+        function removePastCondition(condition) {
+            selectedPastConditions.delete(condition);
+            updateSelectedPastConditions();
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                selectedFiles.add(files[i]);
+            }
+            updateFileList();
+              // 清空 input 以便再次選取相同檔案
+        }
+
+        function handlePictureFileSelect(event) {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                selectedPictureFiles.add(files[i]);
+            }
+            updatePictureFileList();
+              // 清空 input 以便再次選取相同檔案
+        }
+
+        function updateFileList() {
+            const fileListContainer = document.getElementById('fileList');
+            fileListContainer.innerHTML = '';
+            selectedFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    ${file.name} 
+                    <span class="delete-file" onclick="removeFile('${file.name}')">&times;</span>
+                `;
+                fileListContainer.appendChild(fileItem);
+            });
+        }
+
+        function updatePictureFileList() {
+            const pictureFileListContainer = document.getElementById('pictureFileList');
+            pictureFileListContainer.innerHTML = '';
+            selectedPictureFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    ${file.name} 
+                    <span class="delete-file" onclick="removePictureFile('${file.name}')">&times;</span>
+                `;
+                pictureFileListContainer.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(fileName) {
+            selectedFiles.forEach(file => {
+                if (file.name === fileName) {
+                    selectedFiles.delete(file);
+                }
+            });
+            updateFileList();
+        }
+
+        function removePictureFile(fileName) {
+            selectedPictureFiles.forEach(file => {
+                if (file.name === fileName) {
+                    selectedPictureFiles.delete(file);
+                }
+            });
+            updatePictureFileList();
+        }
+
+        function getSelectedConditionsJSON() {
+            return JSON.stringify({
+                family_history: Array.from(selectedConditions)
+            });
+        }
+
+        function getSelectedPastConditionsJSON() {
+            return JSON.stringify({
+                past_history: Array.from(selectedPastConditions)
+            });
+        }
+
+        window.onload = function() {
+            showDiagnosisInfo();
+        };
+    </script>
+</body>
+</html>
