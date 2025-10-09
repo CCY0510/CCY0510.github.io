@@ -38,13 +38,13 @@ function uploadFiles() {
 
     var userName = document.getElementById("name").value;
     var userID = document.getElementById("userID").value;
-    var userEmail = document.getElementById("email").value;
+    var userEmail = "kevin96587@gmail.com";
     var pasthistory = '[' + Array.from(selectedPastConditions).map(item => `"${item}"`).join(',') + ']';
     var familyhistory = '[' + Array.from(selectedConditions).map(item => `"${item}"`).join(',') + ']';
     var family_history_heart = document.getElementById("family_history_heart").value;
     var family_history_heart_input = document.getElementById("family_history_heart_input").value;
-    var smoking = document.getElementById("smoking").value;
-    var drinking = document.getElementById("drinking").value;
+    var smoking = "無";
+    var drinking = "無";
 
     const fileInput = document.getElementById('fileInput');
     const picturefileInput = document.getElementById('picturefileInput'); // 注意这里的 ID
@@ -110,6 +110,7 @@ function uploadFiles() {
         loadingSpinner.style.display = 'none';
     });
 }
+
 
 
 
