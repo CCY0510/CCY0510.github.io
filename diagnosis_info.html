@@ -173,14 +173,14 @@
             background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
         }
 		/*2025 1010 新增
-		/* Radio group layout */
+		/* radio 外層 */
 		.radio-group {
 		    display: flex;
-		    gap: 20px;
+		    gap: 25px;
 		    margin-top: 10px;
 		}
 		
-		/* 外層 label */
+		/* label */
 		.custom-radio {
 		    position: relative;
 		    display: flex;
@@ -197,26 +197,28 @@
 		    cursor: pointer;
 		}
 		
-		/* 自訂的圓圈 */
+		/* 自訂圓圈外觀 */
 		.radio-mark {
 		    height: 22px;
 		    width: 22px;
-		    border: 2px solid #555;
-		    border-radius: 50%;
+		    border: 2px solid #000;     /* 黑色邊框 */
+		    border-radius: 50%;         /* 變成正圓形 */
+		    background-color: white;    /* 預設白色 */
 		    margin-right: 10px;
+		    box-sizing: border-box;
 		    transition: all 0.2s ease;
 		}
 		
-		/* 當被選取時填滿顏色 */
+		/* 被選取時變成黑色 */
 		.custom-radio input:checked ~ .radio-mark {
-		    background-color: #007BFF;
-		    border-color: #007BFF;
+		    background-color: #000;     /* 填滿黑色 */
 		}
 		
-		/* hover 效果 */
+		/* hover 效果（邊框變灰） */
 		.custom-radio:hover .radio-mark {
-		    border-color: #333;
+		    border-color: #555;
 		}
+
 
     </style>
 
@@ -327,8 +329,8 @@
 					-->
 					<!-- 抽菸史 -->
 					<div class="form-group">
-					    <label>抽菸史</label>
-					    <div class="radio-group" id="smoking-options">
+					<label>抽菸史</label>
+					    <div class="radio-group">
 					        <label class="custom-radio">
 					            <input type="radio" name="smoking" value="無" checked>
 					            <span class="radio-mark"></span> 無
@@ -344,10 +346,9 @@
 					    </div>
 					</div>
 					
-					<!-- 喝酒史 -->
 					<div class="form-group">
 					    <label>喝酒史</label>
-					    <div class="radio-group" id="drinking-options">
+					    <div class="radio-group">
 					        <label class="custom-radio">
 					            <input type="radio" name="drinking" value="無" checked>
 					            <span class="radio-mark"></span> 無
@@ -361,6 +362,8 @@
 					            <span class="radio-mark"></span> 經常
 					        </label>
 					    </div>
+
+
 					</div>
 					<div class="form-group">
 						<label for="fileInput">選擇檔案：</label>
@@ -536,6 +539,7 @@
     </script>
 </body>
 </html>
+
 
 
 
