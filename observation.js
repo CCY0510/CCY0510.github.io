@@ -43,8 +43,8 @@ function uploadFiles() {
     var familyhistory = '[' + Array.from(selectedConditions).map(item => `"${item}"`).join(',') + ']';
     var family_history_heart = document.getElementById("family_history_heart").value;
     var family_history_heart_input = document.getElementById("family_history_heart_input").value;
-    var smoking = document.getElementById("smoking").value;
-    var drinking = "無";
+    var smoking = document.querySelector('input[name="smoking"]:checked').value;
+    var drinking = document.querySelector('input[name="drinking"]:checked').value;
 
     const fileInput = document.getElementById('fileInput');
     const picturefileInput = document.getElementById('picturefileInput'); // 注意这里的 ID
@@ -110,6 +110,7 @@ function uploadFiles() {
         loadingSpinner.style.display = 'none';
     });
 }
+
 
 
 
