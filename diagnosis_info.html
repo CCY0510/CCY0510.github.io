@@ -173,52 +173,43 @@
             background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
         }
 		/*2025 1010 新增
-		/* radio 外層 */
-		.radio-group {
-		    display: flex;
-		    gap: 25px;
-		    margin-top: 10px;
-		}
+		/* 排版 */
+		.radio-group { display: flex; gap: 24px; margin-top: 8px; }
+		.custom-radio { display: inline-flex; align-items: center; cursor: pointer; font-size: 20px; gap: 10px; }
 		
-		/* label */
-		.custom-radio {
-		    position: relative;
-		    display: flex;
-		    align-items: center;
-		    cursor: pointer;
-		    font-size: 20px;
-		    user-select: none;
-		}
-		
-		/* 隱藏原生 radio */
+		/* 隱藏原生 radio，但仍可點擊 */
 		.custom-radio input {
-		    position: absolute;
-		    opacity: 0;
-		    cursor: pointer;
+		  position: absolute;
+		  opacity: 0;
+		  width: 0; height: 0;
 		}
 		
-		/* 自訂圓圈外觀 */
+		/* 白色圓框（正圓，不會變形） */
 		.radio-mark {
-		    height: 22px;
-		    width: 22px;
-		    border: 2px solid #000;     /* 黑色邊框 */
-		    border-radius: 50%;         /* 變成正圓形 */
-		    background-color: white;    /* 預設白色 */
-		    margin-right: 10px;
-		    box-sizing: border-box;
-		    transition: all 0.2s ease;
+		  display: inline-block;
+		  width: 18px; height: 18px;
+		  min-width: 18px; min-height: 18px;   /* 防止被其他樣式擠壓 */
+		  box-sizing: border-box;
+		  border: 2px solid #000;
+		  border-radius: 50%;
+		  background: #fff;                    /* 預設白色 */
+		  position: relative;
+		  vertical-align: middle;
 		}
 		
-		/* 被選取時變成黑色 */
-		.custom-radio input:checked ~ .radio-mark {
-		    background-color: #000;     /* 填滿黑色 */
+		/* 被選取時，出現「實心黑色」 */
+		.custom-radio input:checked + .radio-mark::after {
+		  content: "";
+		  position: absolute;
+		  left: 50%; top: 50%;
+		  width: 10px; height: 10px;
+		  background: #000;
+		  border-radius: 50%;
+		  transform: translate(-50%, -50%);
 		}
 		
-		/* hover 效果（邊框變灰） */
-		.custom-radio:hover .radio-mark {
-		    border-color: #555;
-		}
-
+		/* hover 細微強調 */
+		.custom-radio:hover .radio-mark { border-color: #333; }
 
     </style>
 
@@ -329,40 +320,49 @@
 					-->
 					<!-- 抽菸史 -->
 					<div class="form-group">
-					<label>抽菸史</label>
-					    <div class="radio-group">
-					        <label class="custom-radio">
-					            <input type="radio" name="smoking" value="無" checked>
-					            <span class="radio-mark"></span> 無
-					        </label>
-					        <label class="custom-radio">
-					            <input type="radio" name="smoking" value="有">
-					            <span class="radio-mark"></span> 有
-					        </label>
-					        <label class="custom-radio">
-					            <input type="radio" name="smoking" value="曾經">
-					            <span class="radio-mark"></span> 曾經
-					        </label>
-					    </div>
+					  <label>抽菸史</label>
+					  <div class="radio-group">
+					    <label class="custom-radio">
+					      <input type="radio" name="smoking" value="無" checked>
+					      <span class="radio-mark"></span> 無
+					    </label>
+					    <label class="custom-radio">
+					      <input type="radio" name="smoking" value="偶爾">
+					      <span class="radio-mark"></span> 偶爾
+					    </label>
+					    <label class="custom-radio">
+					      <input type="radio" name="smoking" value="經常">
+					      <span class="radio-mark"></span> 經常
+					    </label>
+						<label class="custom-radio">
+					      <input type="radio" name="smoking" value="曾經有">
+					      <span class="radio-mark"></span> 曾經有
+					    </label>
+					  </div>
 					</div>
 					
+					<!-- 喝酒史 -->
 					<div class="form-group">
-					    <label>喝酒史</label>
-					    <div class="radio-group">
-					        <label class="custom-radio">
-					            <input type="radio" name="drinking" value="無" checked>
-					            <span class="radio-mark"></span> 無
-					        </label>
-					        <label class="custom-radio">
-					            <input type="radio" name="drinking" value="偶爾">
-					            <span class="radio-mark"></span> 偶爾
-					        </label>
-					        <label class="custom-radio">
-					            <input type="radio" name="drinking" value="經常">
-					            <span class="radio-mark"></span> 經常
-					        </label>
-					    </div>
-
+					  <label>喝酒史</label>
+					  					  <div class="radio-group">
+					    <label class="custom-radio">
+					      <input type="radio" name="smoking" value="無" checked>
+					      <span class="radio-mark"></span> 無
+					    </label>
+					    <label class="custom-radio">
+					      <input type="radio" name="smoking" value="偶爾">
+					      <span class="radio-mark"></span> 偶爾
+					    </label>
+					    <label class="custom-radio">
+					      <input type="radio" name="smoking" value="經常">
+					      <span class="radio-mark"></span> 經常
+					    </label>
+						<label class="custom-radio">
+					      <input type="radio" name="smoking" value="曾經有">
+					      <span class="radio-mark"></span> 曾經有
+					    </label>
+					  </div>
+					</div>
 
 					</div>
 					<div class="form-group">
@@ -539,6 +539,7 @@
     </script>
 </body>
 </html>
+
 
 
 
