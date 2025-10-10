@@ -279,10 +279,14 @@
                         <label for="smoking">抽菸史</label>
                         <input type="text" id="smoking">
 					-->
-					<div id="smoking-options" class="button-group">
-				    <button type="button" class="smoke-btn" data-value="無">無</button>
-				    <button type="button" class="smoke-btn" data-value="有">有</button>
-				    <button type="button" class="smoke-btn" data-value="曾經">曾經</button>
+					<div class="form-group">
+					    <label>喝酒史</label>
+					    <div id="drinking-options" class="button-group">
+					        <button type="button" class="drink-btn" data-value="無">無</button>
+					        <button type="button" class="drink-btn" data-value="偶爾">偶爾</button>
+					        <button type="button" class="drink-btn" data-value="經常">經常</button>
+					    </div>
+					    <input type="hidden" id="drinking" value="無"> <!-- 隱藏的真實輸出欄位 -->
 					</div>
 					<input type="hidden" id="smoking" value="無">  <!-- 隱藏的真實輸出欄位 -->
                     </div>
@@ -464,5 +468,6 @@
     </script>
 </body>
 </html>
+
 
 
