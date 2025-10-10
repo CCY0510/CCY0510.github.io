@@ -43,7 +43,7 @@ function uploadFiles() {
     var familyhistory = '[' + Array.from(selectedConditions).map(item => `"${item}"`).join(',') + ']';
     var family_history_heart = document.getElementById("family_history_heart").value;
     var family_history_heart_input = document.getElementById("family_history_heart_input").value;
-    var smoking = "無";
+    var smoking = document.getElementById("smoking").value;
     var drinking = "無";
 
     const fileInput = document.getElementById('fileInput');
@@ -110,6 +110,7 @@ function uploadFiles() {
         loadingSpinner.style.display = 'none';
     });
 }
+
 
 
 
