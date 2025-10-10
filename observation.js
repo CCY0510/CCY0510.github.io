@@ -81,7 +81,7 @@ function uploadFiles() {
 
     const loadingSpinner = document.getElementById('loadingSpinner');
     loadingSpinner.style.display = 'block';  // 顯示加載中 Spinner
-    loadingSpinner.querySelector('p').innerHTML = '正在上傳資料...';
+    loadingSpinner.querySelector('p').innerHTML = '正在上傳資料...' + estimatedTimeMessage;
 
     fetch(api_url, {
         method: 'POST',
@@ -97,7 +97,7 @@ function uploadFiles() {
         console.log('伺服器回應:', data);
 
         // 更新HTML，顯示伺服器的回應和預計處理時間
-        document.getElementById("responseMessage").innerHTML = data.message + '<br>' + estimatedTimeMessage;
+        document.getElementById("responseMessage").innerHTML = data.message + '<br>';
 
         // 收到伺服器回應後隱藏加載中 Spinner
         loadingSpinner.style.display = 'none';
@@ -110,6 +110,7 @@ function uploadFiles() {
         loadingSpinner.style.display = 'none';
     });
 }
+
 
 
 
