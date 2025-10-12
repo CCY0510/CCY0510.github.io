@@ -141,7 +141,55 @@
     </main>
 
     <script>
-        
+// === 1012新增：把 showAllPatients 載到的病患清單轉成 { 身分證: [{name, patientId}, ...] } 存進 localStorage ===
+function buildAndSavePatientIndexFromBundle(bundle) {
+  if (!bundle || bundle.resourceType !== 'Bundle' || !Array.isArray(bundle.entry)) {
+    console.warn('[patientIndexV1] bundle 結構不正確，略過建立索引');
+    return;
+  }
+
+  const index = {}; // { nid: [ { name, patientId }, ... ] }
+
+  const pushRec = (nid, name, pid) => {
+    if (!nid) return;
+    if (!index[nid]) index[nid] = [];
+    if (!index[nid].some(x => x.name === name && x.patientId === pid)) {
+      index[nid].push({ name: name || '', patientId: pid || '' });
+    }
+  };
+
+  bundle.entry.forEach(e => {
+    const r = e.resource;
+    if (!r || r.resourceType !== 'Patient') return;
+    if (r.id === '147') return; // 你原本排除的那筆
+
+    // 身分證（identifier.value）
+    let nid = '';
+    if (Array.isArray(r.identifier)) {
+      const found = r.identifier.find(x => x && x.value);
+      nid = found?.value || '';
+    }
+
+    // 姓名（優先用 name[0].text，否則 family+given）
+    let name = '';
+    if (Array.isArray(r.name) && r.name.length) {
+      const n = r.name[0];
+      if (n.text) name = n.text;
+      else {
+        const family = n.family || '';
+        const given  = Array.isArray(n.given) ? n.given.join('') : (n.given || '');
+        name = (family + given).trim();
+      }
+    }
+
+    pushRec(nid, name, r.id);
+  });
+
+  const payload = { updatedAt: Date.now(), map: index };
+  localStorage.setItem('patientIndexV1', JSON.stringify(payload));
+  console.log('[patientIndexV1] 建立完成', payload);
+}
+// === 1012新增結束 ===
   
 		 function uploadPatientInfo(url) {
     const data = new FormData();
@@ -212,6 +260,9 @@
         
         html += '</table>';
         document.getElementById("content").innerHTML = html;
+		// ★ 1012新增：把這次載入的 Bundle 建索引存進 localStorage
+		buildAndSavePatientIndexFromBundle(data);
+		//1012 新增結束
     })
     .catch(error => {
         console.error('Error uploading data:', error); 
@@ -550,3 +601,4 @@ function Familyhistory(patientId) {
     </script>
 </body>
 </html>
+
