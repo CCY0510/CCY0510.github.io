@@ -246,7 +246,7 @@
 		
         function showDiagnosisInfo() {
             document.getElementById("content").innerHTML = `
-			
+	
 				<h1 style="text-align: center; margin-bottom: 0.1em;">
   			電子病歷資訊網站
 		</h1>
@@ -256,14 +256,24 @@
                 <h2>上傳病歷檔案</h2>
                 <p id="errorOutput" style="color: red;"></p>
                 <form action="#" method="post" enctype="multipart/form-data">
+				<!--
 					<div class="form-group">
                         <label for="name">姓名</label>
                         <input type="text" id="name">
                     </div>
+				-->
 
                     <div class="form-group">
                         <label for="userID">身分證字號</label>
                         <input type="text" id="userID">
+					</div>
+					
+					<div class="form-group">
+					  <label for="name">姓名</label>
+					  <input type="text" id="name" list="name_candidates" placeholder="輸入身分證後自動帶入或可選擇">
+					  <datalist id="name_candidates"></datalist>
+					  <small id="idLookupMsg" style="color:#666;"></small>
+					</div>
 
 					<!--
                     </div>
@@ -391,7 +401,50 @@
                     </div>
                     <div id="responseMessage"></div>
                 </form>`;
+			
+			//-------1012
+			 // ★★★ 關鍵：在 innerHTML 設完之後再綁事件 ★★★
+			  const userIDInput = document.getElementById('userID');
+			  const debouncedLookup = debounce(() => fillNameCandidatesById(userIDInput.value), 500);
+			  userIDInput.addEventListener('input', debouncedLookup);
+			  userIDInput.addEventListener('blur', () => fillNameCandidatesById(userIDInput.value));
+			
+			  // 你原本的 familyhistory / pasthistory 綁定也要放在這裡（因為元素剛被插入）
+			  document.getElementById('familyhistory').addEventListener('change', function() {
+			    const condition = this.value;
+			    if (condition && !selectedConditions.has(condition)) {
+			      selectedConditions.add(condition);
+			      updateSelectedConditions();
+			    }
+			    this.value = '';
+			  });
+			
+			  document.getElementById('pasthistory').addEventListener('change', function() {
+			    const condition = this.value;
+			    if (condition && condition !== '自定義' && !selectedPastConditions.has(condition)) {
+			      selectedPastConditions.add(condition);
+			      updateSelectedPastConditions();
+			    } else if (condition === '自定義') {
+			      const customInput = document.createElement('input');
+			      customInput.type = 'text';
+			      customInput.placeholder = '請輸入自定義過去病史';
+			      customInput.onchange = function() {
+			        const customCondition = this.value.trim();
+			        if (customCondition && !selectedPastConditions.has(customCondition)) {
+			          selectedPastConditions.add(customCondition);
+			          updateSelectedPastConditions();
+			          this.remove();
+			        }
+			      };
+			      this.parentNode.appendChild(customInput);
+			    }
+			    this.value = '';
+			  });
+			}
+			 //-------1012
 
+
+		
             document.getElementById('familyhistory').addEventListener('change', function() {
                 const condition = this.value;
                 if (condition && !selectedConditions.has(condition)) {
@@ -421,7 +474,6 @@
                     this.parentNode.appendChild(customInput);
                 }
 				
-				bindIdLookupEvents();
                 this.value = '';
             });
         }
@@ -544,8 +596,84 @@
             showDiagnosisInfo();
         };
     </script>
+
+
+	//1012*-------------------------------------------------------
+	<script>
+		// --- 工具：把 FHIR name 組成字串 ---
+		function fhirNameToText(n) {
+		  if (!n) return '';
+		  if (n.text) return n.text;
+		  const family = n.family || '';
+		  const given  = Array.isArray(n.given) ? n.given.join('') : (n.given || '');
+		  return (family + given).trim();
+		}
+		
+		// --- debounce，避免每個 key 都打 API ---
+		function debounce(fn, delay = 400) {
+		  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+		}
+		
+		// --- 呼叫你的後端 /patient_name_by_id 並更新候選姓名 ---
+		async function fillNameCandidatesById(nid) {
+		  const msg = document.getElementById('idLookupMsg');
+		  const dl = document.getElementById('name_candidates');
+		  const nameInput = document.getElementById('name');
+		
+		  if (!nid || nid.trim().length < 2) {
+		    dl.innerHTML = ''; nameInput.value = ''; msg.textContent = '';
+		    return;
+		  }
+		
+		  msg.textContent = '查詢中…';
+		
+		  try {
+		    const fd = new FormData();
+		    fd.append('identifier', nid.trim());
+		
+		    const res = await fetch(`${API_BASE_URL}/patient_name_by_id`, { method: 'POST', body: fd });
+		    const data = await res.json();
+		
+		    dl.innerHTML = '';
+		    nameInput.value = '';
+		
+		    if (!data.ok) {
+		      msg.textContent = '查詢失敗：' + (data.error || '');
+		      return;
+		    }
+		
+		    const cands = data.candidates || [];
+		    const uniqNames = Array.from(new Set(cands.map(c => c.name).filter(Boolean)));
+		
+		    uniqNames.forEach(n => {
+		      const opt = document.createElement('option');
+		      opt.value = n; dl.appendChild(opt);
+		    });
+		
+		    if (uniqNames.length === 1) {
+		      nameInput.value = uniqNames[0];
+		      msg.textContent = '已帶入姓名。';
+		    } else if (uniqNames.length > 1) {
+		      msg.textContent = `找到 ${uniqNames.length} 筆，請從清單選擇姓名。`;
+		    } else {
+		      msg.textContent = '查無此病患（請確認身分證或先建檔）。';
+		    }
+		
+		    // 如果你也想保留 patientId，可在這裡存到全域（需要時再做配對）
+		    // window.currentPatientCandidates = cands;
+		
+		  } catch (e) {
+		    console.error(e);
+		    msg.textContent = '查詢發生錯誤。';
+		  }
+		}
+		</script>
+		//1012*-------------------------------------------------------
+
+	
 </body>
 </html>
+
 
 
 
