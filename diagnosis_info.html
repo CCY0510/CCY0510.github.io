@@ -254,19 +254,11 @@
                 <h2>上傳病歷檔案</h2>
                 <p id="errorOutput" style="color: red;"></p>
                 <form action="#" method="post" enctype="multipart/form-data">
-				<!--
-                    <div class="form-group">
+					<div class="form-group">
                         <label for="name">姓名</label>
                         <input type="text" id="name">
                     </div>
-				-->
-				//2025 10 12
-					<div class="form-group">
-					    <label for="name">姓名</label>
-					    <input type="text" id="name" list="name_candidates" placeholder="輸入身分證後自動帶入">
-					    <datalist id="name_candidates"></datalist>
-					    <small id="idLookupMsg" style="color:#666;"></small>
-					</div>
+
                     <div class="form-group">
                         <label for="userID">身分證字號</label>
                         <input type="text" id="userID">
@@ -543,98 +535,13 @@
             });
         }
 
-		//2025 10 12
-				// --- 小工具：debounce，避免每打字都發請求 ---
-		function debounce(fn, delay = 400) {
-		  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
-		}
-		
-		// 從 FHIR name 物件組出全名
-		function fhirNameToText(n) {
-		  if (!n) return '';
-		  if (n.text) return n.text;
-		  const family = n.family || '';
-		  const given  = Array.isArray(n.given) ? n.given.join('') : (n.given || '');
-		  return (family + given).trim();
-		}
-		
-		// 將候選姓名填入 datalist；若只有一筆就自動帶入
-		function populateNameCandidates(candidates) {
-		  const dl = document.getElementById('name_candidates');
-		  const nameInput = document.getElementById('name');
-		  dl.innerHTML = '';
-		  const uniq = Array.from(new Set(candidates.filter(Boolean)));
-		  uniq.forEach(n => {
-		    const opt = document.createElement('option');
-		    opt.value = n;
-		    dl.appendChild(opt);
-		  });
-		  if (uniq.length === 1) nameInput.value = uniq[0];
-		}
-		
-		// 依身分證查 Patient，填候選姓名
-		async function lookupNameByIdentifier(nationalId) {
-		  const msg = document.getElementById('idLookupMsg');
-		  const nameInput = document.getElementById('name');
-		
-		  if (!nationalId || nationalId.trim().length < 2) {
-		    nameInput.value = '';
-		    document.getElementById('name_candidates').innerHTML = '';
-		    msg.textContent = '';
-		    return;
-		  }
-		
-		  try {
-		    msg.textContent = '查詢中…';
-		
-		    // 你現有的 /view：POST 一個 userURL 讓後端去 FHIR 拉資料
-		    const fd = new FormData();
-		    fd.append('userURL', `/Patient?identifier=${encodeURIComponent(nationalId.trim())}`);
-		
-		    const res = await fetch(`${API_BASE_URL}/view`, { method: 'POST', body: fd });
-		    if (!res.ok) throw new Error('查詢失敗');
-		
-		    // /view 回的是字串化 JSON，所以先拿 text 再 parse
-		    const txt  = await res.text();
-		    const data = JSON.parse(txt);
-		
-		    if (data.resourceType === 'Bundle' && Array.isArray(data.entry) && data.entry.length) {
-		      const names = data.entry
-		        .map(e => e?.resource?.name?.[0])
-		        .map(fhirNameToText)
-		        .filter(Boolean);
-		      populateNameCandidates(names);
-		      msg.textContent = names.length > 1 ? `找到 ${names.length} 位同身分證的病患，請從清單選擇姓名。` : '已帶入姓名。';
-		
-		      // 若你想把 patientId 存起來（後續用得到），可以同時存：
-		      // window.currentPatientId = data.entry[0].resource.id; // 或做成讓使用者挑
-		
-		    } else {
-		      populateNameCandidates([]);
-		      nameInput.value = '';
-		      msg.textContent = '查無此病患（請確認身分證或先建立病患資料）。';
-		    }
-		  } catch (err) {
-		    console.error(err);
-		    populateNameCandidates([]);
-		    document.getElementById('name').value = '';
-		    msg.textContent = '查詢發生錯誤。';
-		  }
-		}
-		
-		// 綁定在「身分證字號」欄位（輸入中 + 失焦都查一次）
-		const userIDInput = document.getElementById('userID');
-		const debouncedLookup = debounce(() => lookupNameByIdentifier(userIDInput.value), 500);
-		userIDInput.addEventListener('input', debouncedLookup);
-		userIDInput.addEventListener('blur', () => lookupNameByIdentifier(userIDInput.value));
-
-
         window.onload = function() {
             showDiagnosisInfo();
         };
     </script>
 </body>
 </html>
+
 
 
 
