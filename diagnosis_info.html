@@ -213,10 +213,10 @@
 
     </style>
 
+	<script src="./config.js"></script>
     <script src="./patient.js"></script>
     <script src="./observation.js"></script>
     <script src="./download.js"></script>
-	<script src="./config.js"></script>
     <title>檢測數據</title>
 </head>
 <body>
@@ -442,41 +442,7 @@
 			  });
 			}
 			 //-------1012
-
-
-		
-            document.getElementById('familyhistory').addEventListener('change', function() {
-                const condition = this.value;
-                if (condition && !selectedConditions.has(condition)) {
-                    selectedConditions.add(condition);
-                    updateSelectedConditions();
-                }
-                this.value = '';
-            });
-
-            document.getElementById('pasthistory').addEventListener('change', function() {
-                const condition = this.value;
-                if (condition && condition !== '自定義' && !selectedPastConditions.has(condition)) {
-                    selectedPastConditions.add(condition);
-                    updateSelectedPastConditions();
-                } else if (condition === '自定義') {
-                    const customInput = document.createElement('input');
-                    customInput.type = 'text';
-                    customInput.placeholder = '請輸入自定義過去病史';
-                    customInput.onchange = function() {
-                        const customCondition = this.value.trim();
-                        if (customCondition && !selectedPastConditions.has(customCondition)) {
-                            selectedPastConditions.add(customCondition);
-                            updateSelectedPastConditions();
-                            this.remove();
-                        }
-                    };
-                    this.parentNode.appendChild(customInput);
-                }
-				
-                this.value = '';
-            });
-        }
+        
 
         function updateSelectedConditions() {
             const container = document.getElementById('selectedConditions');
@@ -675,6 +641,7 @@
 	
 </body>
 </html>
+
 
 
 
