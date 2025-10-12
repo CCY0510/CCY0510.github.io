@@ -241,74 +241,7 @@
         let selectedPastConditions = new Set();
         let selectedFiles = new Set();
         let selectedPictureFiles = new Set();
-		// === 1012新增：讀取 localStorage 的索引、依身分證帶出姓名 ===
-		function loadPatientIndex() {
-		  try {
-		    const raw = localStorage.getItem('patientIndexV1');
-		    if (!raw) return null;
-		    return JSON.parse(raw); // { updatedAt, map: { nid: [{name, patientId}, ...] } }
-		  } catch (e) {
-		    console.warn('[patientIndexV1] 無法解析索引', e);
-		    return null;
-		  }
-		}
 		
-		function populateNameCandidatesFromIndex(list) {
-		  const dl = document.getElementById('name_candidates');
-		  const nameInput = document.getElementById('name');
-		  dl.innerHTML = '';
-		  const uniq = Array.from(new Set((list || []).map(x => x.name).filter(Boolean)));
-		  uniq.forEach(n => {
-		    const opt = document.createElement('option');
-		    opt.value = n;
-		    dl.appendChild(opt);
-		  });
-		  // 只有一個候選，直接帶入
-		  if (uniq.length === 1) nameInput.value = uniq[0];
-		}
-		
-		function bindIdLookupEvents() {
-		  const idInput  = document.getElementById('userID');
-		  const msg      = document.getElementById('idLookupMsg');
-		  const nameInput= document.getElementById('name');
-		
-		  const doLookup = () => {
-		    const idx = loadPatientIndex();
-		    if (!idx || !idx.map) {
-		      msg.textContent = '尚未建立快取，請先到「查看病患資料」頁面載入一次名單。';
-		      populateNameCandidatesFromIndex([]);
-		      nameInput.value = '';
-		      return;
-		    }
-		    const nid = (idInput.value || '').trim();
-		    if (nid.length === 0) {
-		      msg.textContent = '';
-		      populateNameCandidatesFromIndex([]);
-		      nameInput.value = '';
-		      return;
-		    }
-		    const candidates = idx.map[nid] || [];
-		    if (candidates.length === 0) {
-		      msg.textContent = '查無此身分證的病患（或未建立快取）。';
-		      populateNameCandidatesFromIndex([]);
-		      nameInput.value = '';
-		      return;
-		    }
-		    populateNameCandidatesFromIndex(candidates);
-		    msg.textContent = candidates.length > 1
-		      ? `找到 ${candidates.length} 位同身分證的病患，請從清單選擇姓名。`
-		      : '已帶入姓名。';
-		  };
-		
-		  // 簡單防抖：輸入 400ms 後才查
-		  let t;
-		  idInput.addEventListener('input', () => {
-		    clearTimeout(t);
-		    t = setTimeout(doLookup, 400);
-		  });
-		  idInput.addEventListener('blur', doLookup);
-		}
-		// === 1012新增結束 ===
 
 		
         function showDiagnosisInfo() {
@@ -500,8 +433,7 @@
                     };
                     this.parentNode.appendChild(customInput);
                 }
-
-				//1012 bindIdLookupEvents();
+				
 				bindIdLookupEvents();
                 this.value = '';
             });
@@ -627,6 +559,7 @@
     </script>
 </body>
 </html>
+
 
 
 
