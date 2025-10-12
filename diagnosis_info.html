@@ -313,9 +313,7 @@
 		
         function showDiagnosisInfo() {
             document.getElementById("content").innerHTML = `
-			//1012
-			bindIdLookupEvents();
-            //1012    
+			
 				<h1 style="text-align: center; margin-bottom: 0.1em;">
   			電子病歷資訊網站
 		</h1>
@@ -502,6 +500,7 @@
                     };
                     this.parentNode.appendChild(customInput);
                 }
+				bindIdLookupEvents();
                 this.value = '';
             });
         }
@@ -626,6 +625,7 @@
     </script>
 </body>
 </html>
+
 
 
 
