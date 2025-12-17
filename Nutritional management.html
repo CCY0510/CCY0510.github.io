@@ -159,7 +159,7 @@
 		var loadingSpinner = document.getElementById('loadingSpinner');
 		loadingSpinner.style.display = 'block';
 
-		fetch("https://0db7-140-116-156-231.ngrok-free.app/cancer", {
+		fetch("`${API_BASE_URL}/cancer", {
 			method: 'POST',
 			body: formData
 		})

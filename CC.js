@@ -52,7 +52,7 @@ function deleteComplaint(entryId) {
             // 清空上次回應的訊息
             document.getElementById("responseMessage").innerHTML = '';
 
-            const api_url = "https://02f9-140-116-156-231.ngrok-free.app/delete";
+            const api_url = "`${API_BASE_URL}/delete";
 
             const formData = new FormData();
             formData.append('Resource', "Condition");

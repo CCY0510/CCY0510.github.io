@@ -268,7 +268,7 @@
 		}
 
 		function showAllPatients() {
-			const url = 'https://02f9-140-116-156-231.ngrok-free.app/view'; // Flask 伺服器 URL
+			const url = '`${API_BASE_URL}/view'; // Flask 伺服器 URL
 			uploadPatientInfo(url);
 		}
 
@@ -277,7 +277,7 @@
 		const data = new FormData();
 		data.append('userURL', `/Observation?patient=${patientId}`);
 
-		const url = 'https://02f9-140-116-156-231.ngrok-free.app/view'; // Flask 伺服器的端點 URL
+		const url = '`${API_BASE_URL}/view'; // Flask 伺服器的端點 URL
 
 		fetch(url, {
 			method: 'POST',
@@ -344,7 +344,7 @@
 			const data = new FormData();
 			data.append('userURL', `/DiagnosticReport?patient=${patientId}`);
 
-			const url = 'https://02f9-140-116-156-231.ngrok-free.app/view'; // Flask 服务器的端点 URL
+			const url = '`${API_BASE_URL}/view'; // Flask 服务器的端点 URL
 
 			fetch(url, {
 				method: 'POST',
@@ -414,7 +414,7 @@
     const data = new FormData();
     data.append('userURL', `/Condition?_text=%27主訴%27&patient=${patientId}`);
 
-    const url = 'https://02f9-140-116-156-231.ngrok-free.app/view'; // Flask 服务器的端点 URL
+    const url = '`${API_BASE_URL}/view'; // Flask 服务器的端点 URL
 
     fetch(url, {
         method: 'POST',
@@ -473,7 +473,7 @@ function PastHistory(patientId) {
     const data = new FormData();
     data.append('userURL', `/Condition?_text=%27%E9%81%8E%E5%8E%BB%E7%97%85%E5%8F%B2%27&patient=${patientId}`);
 
-    const url = 'https://02f9-140-116-156-231.ngrok-free.app/view'; // Flask 服务器的端点 URL
+    const url = '`${API_BASE_URL}/view'; // Flask 服务器的端点 URL
 
     fetch(url, {
         method: 'POST',
@@ -532,7 +532,7 @@ function Familyhistory(patientId) {
     const data = new FormData();
     data.append('userURL', `/FamilyMemberHistory?patient=${patientId}`);
 
-    const url = 'https://02f9-140-116-156-231.ngrok-free.app/view'; // Flask 服务器的端点 URL
+    const url = '`${API_BASE_URL}/view'; // Flask 服务器的端点 URL
 
     fetch(url, {
         method: 'POST',

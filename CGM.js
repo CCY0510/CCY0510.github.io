@@ -51,7 +51,7 @@ function uploadFiles() {
                 // 只顯示 index 為 0 以及 3 之後的圖片
                 if (index === 0 || index >= 3) {
                     const img = document.createElement('img');
-                    img.src = `https://02f9-140-116-156-231.ngrok-free.app${imagePath}`;
+                    img.src = `https://flask.cmicsd.com${imagePath}`;
                     img.alt = 'Trend Analysis Image';
                     imageContainer.appendChild(img);
                 }
