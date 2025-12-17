@@ -15,7 +15,7 @@ function downloadData() {
     var loadingSpinner = document.getElementById('loadingSpinner');
     loadingSpinner.style.display = 'block';
 
-    fetch("`${API_BASE_URL}/download", {
+    fetch("https://flask.cmicsd.com/download", {
         method: 'POST',
         body: requestData
     })
@@ -66,3 +66,4 @@ function downloadData() {
         loadingSpinner.style.display = 'none';
     });
 }
+
