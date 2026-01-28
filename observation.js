@@ -38,7 +38,7 @@ function uploadFiles() {
 
     var userName = document.getElementById("name").value;
     var userID = document.getElementById("userID").value;
-    var userEmail = "kevin96587@gmail.com";
+    var userEmail = "";
     var pasthistory = '[' + Array.from(selectedPastConditions).map(item => `"${item}"`).join(',') + ']';
     var familyhistory = '[' + Array.from(selectedConditions).map(item => `"${item}"`).join(',') + ']';
     var family_history_heart = document.getElementById("family_history_heart").value;
@@ -59,9 +59,14 @@ function uploadFiles() {
     formData.append('familyhistory', familyhistory);
     formData.append('family_history_heart', family_history_heart);
     formData.append('family_history_heart_input', family_history_heart_input);
-    formData.append('smoking', smoking);
-    formData.append('drinking', drinking);
 
+    // 修改 observation.js
+    const smokingValue = document.querySelector('input[name="smoking"]:checked').value;
+    const drinkingValue = document.querySelector('input[name="drinking"]:checked').value;
+    
+    // 在數值前加上網頁搜尋需要的關鍵字
+    formData.append('smoking', "抽菸史: " + smokingValue); 
+    formData.append('drinking', "喝酒史: " + drinkingValue);
     const files = fileInput.files;
     if (files.length > 0) {
         for (let i = 0; i < files.length; i++) {
@@ -110,6 +115,7 @@ function uploadFiles() {
         loadingSpinner.style.display = 'none';
     });
 }
+
 
 
 
