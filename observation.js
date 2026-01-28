@@ -59,8 +59,8 @@ function uploadFiles() {
     formData.append('familyhistory', familyhistory);
     formData.append('family_history_heart', family_history_heart);
     formData.append('family_history_heart_input', family_history_heart_input);
-    formData.append('smoking', smoking);
-    formData.append('drinking', drinking);
+    formData.append('smoking', `抽菸史:${smoking}`);
+    formData.append('drinking', `喝酒史:${drinking}`);
 
     const files = fileInput.files;
     if (files.length > 0) {
@@ -110,6 +110,7 @@ function uploadFiles() {
         loadingSpinner.style.display = 'none';
     });
 }
+
 
 
 
