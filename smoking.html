@@ -158,25 +158,36 @@
 
                 // 检查 resourceType 属性是否为 Bundle，并且包含 entry 数组
                 if (jsonData.resourceType === 'Bundle' && Array.isArray(jsonData.entry)) {
-				// 遍历每个 entry
-				jsonData.entry.forEach(entry => {
-					// 检查 entry 中的 resourceType 是否为 Condition
-					if (entry.resource.resourceType === 'Condition') {
-						// 提取 code 中的 text 字段内容
-						let codeText = entry.resource.code.text || '';
-						let medicationId = entry.resource.id;
-						// 将表格行添加到 HTML 字符串中
-						html += `<tr>
-									<td>${codeText}</td>
-									<td><button onclick="deleteEntry('${medicationId}')">刪除</button></td>
-								</tr>`;
-                        } else {
-                            console.error('Error: Entry resource type is invalid.');
-                        }
-                    });
-                } else {
-                    console.error('Error: Data structure is invalid.');
-                }
+				    jsonData.entry.forEach(entry => {
+				        if (entry.resource.resourceType === 'Condition') {
+				            
+				            // --- 1. 新增：取得 note 內容 (防止沒有 note 報錯) ---
+				            let noteText = '';
+				            if (entry.resource.note && entry.resource.note.length > 0) {
+				                noteText = entry.resource.note[0].text;
+				            }
+				
+				            // --- 2. 新增：篩選判斷 (這裡是抽菸史的例子) ---
+				            if (noteText === '抽菸史') {
+				                
+				                // --- 3. 原本的顯示邏輯移到這裡面 ---
+				                let codeText = entry.resource.code.text || '';
+				                let medicationId = entry.resource.id;
+				                
+				                html += `<tr>
+				                            <td>${codeText}</td>
+				                            <td><button onclick="deleteEntry('${medicationId}')">刪除</button></td>
+				                         </tr>`;
+				            }
+				            // ----------------------------------------------
+				
+				        } else {
+				            console.error('Error: Entry resource type is invalid.');
+				        }
+				    });
+				} else {
+				    console.error('Error: Data structure is invalid.');
+				}
 
                 html += '</table>';
 
@@ -200,6 +211,7 @@
     </script>
 </body>
 </html>
+
 
 
 
