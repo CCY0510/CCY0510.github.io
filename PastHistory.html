@@ -121,7 +121,7 @@
 
         function PastHistory(patientId) {
             const data = new FormData();
-            data.append('userURL', `/Condition?_text='過去病史'&patient=${patientId}`);
+            data.append('userURL', `/Condition?patient=${patientId}`);
 			
             const url = `${API_BASE_URL}/view`; // Flask 服务器的端点 URL
 
@@ -209,6 +209,7 @@
     </script>
 </body>
 </html>
+
 
 
 
