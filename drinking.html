@@ -122,7 +122,7 @@
         function showdrinking(patientId) {
             // 構建包含病患 ID 的 FormData
             const data = new FormData();
-            data.append('userURL', `/Condition?_text=%27喝酒史%27&patient=${patientId}`);
+            data.append('userURL', `/Condition?patient=${patientId}`);
 
             const url = `${API_BASE_URL}/view`; // Flask 伺服器的端點 URL
 
@@ -201,3 +201,4 @@
     </script>
 </body>
 </html>
+
