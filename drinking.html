@@ -159,24 +159,40 @@
 
                 // 检查 resourceType 属性是否为 Bundle，并且包含 entry 数组
                 if (jsonData.resourceType === 'Bundle' && Array.isArray(jsonData.entry)) {
-				// 遍历每个 entry
-				jsonData.entry.forEach(entry => {
-					// 检查 entry 中的 resourceType 是否为 Condition
-					if (entry.resource.resourceType === 'Condition') {
-						// 提取 code 中的 text 字段内容
-						let codeText = entry.resource.code.text || '';
-						let medicationId = entry.resource.id;
-						// 将表格行添加到 HTML 字符串中
-						html += `<tr>
-									<td>${codeText}</td>
-									<td><button onclick="deleteEntry('${medicationId}')">刪除</button></td>
-								</tr>`;
+                    // 遍历每个 entry
+                    jsonData.entry.forEach(entry => {
+                        // 检查 entry 中的 resourceType 是否为 Condition
+                        if (entry.resource.resourceType === 'Condition') {
+                            
+                            // --- 新增篩選邏輯開始 ---
+                            
+                            // 1. 安全取得 note 的內容
+                            let noteText = '';
+                            if (entry.resource.note && entry.resource.note.length > 0) {
+                                noteText = entry.resource.note[0].text;
+                            }
+
+                            // 2. 只有當 note 是 '喝酒史' 才顯示在表格中
+                            if (noteText === '喝酒史') {
+                                // 提取 code 中的 text 字段内容
+                                let codeText = entry.resource.code.text || '';
+                                let medicationId = entry.resource.id;
+                                
+                                // 将表格行添加到 HTML 字符串中
+                                html += `<tr>
+                                            <td>${codeText}</td>
+                                            <td><button onclick="deleteEntry('${medicationId}')">刪除</button></td>
+                                         </tr>`;
+                            }
+                            // --- 新增篩選邏輯結束 ---
+
                         } else {
                             console.error('Error: Entry resource type is invalid.'); 
                         }
                     });
                 } else {
-                    console.error('Error: Data structure is invalid.'); 
+                    // 如果沒有資料或是結構不對，可以在這裡處理 (例如顯示目前無資料)
+                    console.log('No data found or invalid structure.'); 
                 }
 
                 html += '</table>';
@@ -201,4 +217,5 @@
     </script>
 </body>
 </html>
+
 
