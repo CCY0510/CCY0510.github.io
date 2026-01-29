@@ -158,17 +158,33 @@
 
                 if (jsonData.hasOwnProperty('entry') && Array.isArray(jsonData.entry)) {
                     jsonData.entry.forEach(entry => {
-                        const entryId = entry.resource.id;
-                        const codeText = entry.resource.code && entry.resource.code.text ? entry.resource.code.text : '';
+                        // 檢查資源類型
+                        if (entry.resource.resourceType === 'Condition') {
+                            
+                            // --- 新增篩選邏輯 ---
+                            
+                            // 1. 安全取得 note 內容
+                            let noteText = '';
+                            if (entry.resource.note && entry.resource.note.length > 0) {
+                                noteText = entry.resource.note[0].text;
+                            }
 
-                        // 将表格行添加到HTML字符串中
-                        html += `<tr>
-                                    <td>${codeText}</td>
-                                    <td><button onclick="deleteEntry('${entryId}')">刪除</button></td>
-                                 </tr>`;
+                            // 2. 只有當 note 是 '過去病史' 才顯示
+                            if (noteText === '過去病史') {
+                                const entryId = entry.resource.id;
+                                const codeText = entry.resource.code && entry.resource.code.text ? entry.resource.code.text : '';
+
+                                // 將表格行添加到 HTML 字串中
+                                html += `<tr>
+                                            <td>${codeText}</td>
+                                            <td><button onclick="deleteEntry('${entryId}')">刪除</button></td>
+                                         </tr>`;
+                            }
+                            // --- 篩選結束 ---
+                        }
                     });
                 } else {
-                    console.error('Error: Data structure is invalid.'); 
+                    // console.error('Error: Data structure is invalid or no entry found.'); 
                 }
 
                 html += '</table>';
@@ -193,6 +209,7 @@
     </script>
 </body>
 </html>
+
 
 
 
