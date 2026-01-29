@@ -164,7 +164,7 @@
               <th>姓名</th><th>身分證字號</th><th>性別</th><th>生日</th>
               <th>檢測數據</th><th>診斷報告</th><th>主訴</th><th>過去病史</th>
               <th>家族病史</th><th>抽菸史</th><th>喝酒史</th>
-              <th>趨勢分析圖</th><th>雲端藥歷</th><th>PPT下載</th>
+              <th>趨勢分析圖</th><th>雲端藥歷</th>
             </tr>
           </thead>
           <tbody>
@@ -186,8 +186,6 @@
         const btn = (label, page) =>
           `<button style="width:120px;" onclick="location.href='${page}.html?id=${pid}'">${label}</button>`;
 
-        // PPT 下載按鈕
-        const dl = `<button style="background:#C00;width:120px;" onclick="downloadData('${name}','${idVal}')">PPT下載</button>`;
 
         html += `
           <tr>
@@ -204,7 +202,6 @@
             <td>${btn("喝酒史","drinking")}</td>
             <td>${btn("趨勢分析圖","CGM")}</td>
             <td>${btn("雲端藥歷","cloud")}</td>
-            <td>${dl}</td>
           </tr>
         `;
       });
@@ -558,3 +555,4 @@ function Familyhistory(patientId) {
     </script>
 </body>
 </html>
+
